@@ -1,33 +1,12 @@
-;; gerrit-review.el --- Download gerrit review and diff the change.
+;;; gerrit-download.el --- Show gerrit reviews in a diff buffer.
 
 ;; Copyright (C) 2013 Chmouel Boudjnah
 
 ;; Author: Chmouel Boudjnah <chmouel@chmouel.com>
-;; Created: 20 Aug 2013
+;; URL: https://github.com/chmouel/gerrit-download.el
+;; Version: 0.1
 ;; Keywords: tools
 ;; Package-Requires: ((magit "20130828.1540"))
-
-;; This file is not (yet) part of GNU Emacs.
-;; However, it is distributed under the same license.
-
-;; GNU Emacs is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 2, or (at your option)
-;; any later version.
-
-;; GNU Emacs is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs; see the file COPYING.  If not, write to the
-;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-;; Boston, MA 02110-1301, USA.
-
-;;; Change Log:
-
-;; 29 Aug 2013 - Created
 
 ;;; Commentary:
 
@@ -42,8 +21,25 @@
 ;;; in your init file and use the 'v' key to have it automatically
 ;;; parse the email and show the diff.
 
-;;; ToDo:
+;;; TODO:
 ;; magit interface key.
+
+;;; License:
+
+;; This file is NOT part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (eval-when-compile
   (require 'gnus)
@@ -127,7 +123,8 @@
                  (magit-show-commit "HEAD")
                (error "Error while downloading review, check *git review* buffer."))))))))
 
+;;; End gerrit-download.el ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (provide 'gerrit-download)
 
-
 ;;; gerrit-download.el ends here
