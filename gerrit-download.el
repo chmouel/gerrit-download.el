@@ -37,21 +37,29 @@
 ;;; This is using magit and the `magit-repo-dirs` variable to download
 ;;; the change into.
 ;;;
-;;;
-
+;;; With gnus add a
 
 ;;; ToDo:
-
-;; gnus integration.
 ;; magit interface key.
 
+(eval-when-compile
+  (require 'gnus)
+  (require 'gnus-art))
+
+;;; Code:
 (require 'magit)
+
+;; User variables
 
 (defvar gerrit-review-program "git-review"
   "Path to gerrit review.")
 
-; Internal variable
-(setq gerrit-project-cwd 'nil)
+;; Internal variables
+
+(defvar gerrit-project-cwd nil)
+
+
+;; Functions
 
 (defun gerrit-check-if-repo-modified ()
   "Check if current repo has been modified."
@@ -70,6 +78,27 @@
                                                 project)))
                (concat path "/" (file-name-nondirectory project)))
               )) magit-repo-dirs) ""))
+
+(defun gerrit-download-insinuate-gnus()
+  "Hook Gerrit Download into Gnus."
+  (define-key gnus-summary-mode-map "v" 'gerrit-download-gnus-from-email)
+  (define-key gnus-article-mode-map "v" 'gerrit-download-gnus-from-email))
+
+;;;###autoload
+(defun gerrit-download-gnus-from-email()
+  "Parse an email from jenkins in Gnus and get the project and change-id."
+  (interactive)
+  (let (change-id project)
+  (gnus-with-article-buffer
+      (article-goto-body)
+      (while (re-search-forward "^Gerrit-Project:\s*\\([^ \t\n]+\\)" nil t)
+        (setq project (match-string-no-properties 1)))
+      (article-goto-body)
+      (while (re-search-forward "^Gerrit-Change-Id:\s*\\([^ \t\n]+\\)" nil t)
+        (setq change-id (match-string-no-properties 1)))
+      (message "%s %s" project change-id)
+      (if (and project change-id)
+          (gerrit-download project change-id)))))
 
 ;;;###autoload
 (defun gerrit-download (project review-id)
@@ -96,5 +125,6 @@
                (error "Error while downloading review, check *git review* buffer."))))))))
 
 (provide 'gerrit-download)
+
 
 ;;; gerrit-download.el ends here
