@@ -74,15 +74,13 @@
   (interactive
    (list (read-string "Project: ")
          (read-string "Review-ID: ")))
-  (let ((default-directory
-          (magit-get-top-dir
-           (gerrit-get-local-directory project)))
-        changes)
-    (unless default-directory
-      (error "Cannot find %s in magit-repos-dir" project))
+  (let* ((local-directory (gerrit-get-local-directory project))
+         (default-directory (magit-get-top-dir local-directory))
+         changes)
+    (if (string= "" local-directory)
+        (error "Cannot find %s in magit-repos-dir" project))
     (unless (gerrit-check-if-repo-modified)
         (error "%s has changes, not processing" project))
-
     (let ((proc (concat "git-review" review-id)))
       (message "Starting git-review...")
       (start-process proc "*git review*" gerrit-review-program "-d" review-id)
