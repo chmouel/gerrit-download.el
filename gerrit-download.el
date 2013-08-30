@@ -44,7 +44,6 @@
 
 ;; gnus integration.
 ;; magit interface key.
-;; only diff is showing not log.
 
 (require 'magit)
 
@@ -93,7 +92,7 @@
        #'(lambda (process event)
            (let ((default-directory gerrit-project-cwd))
              (if (string= event "finished\n")
-                 (magit-diff "HEAD^1")
+                 (magit-show-commit "HEAD")
                (error "Error while downloading review, check *git review* buffer."))))))))
 
 (provide 'gerrit-download)
