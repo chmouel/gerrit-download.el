@@ -51,6 +51,9 @@
 (defvar gerrit-review-program "git-review"
   "Path to gerrit review.")
 
+; Internal variable
+(setq gerrit-project-cwd 'nil)
+
 (defun gerrit-check-if-repo-modified ()
   "Check if current repo has been modified."
   (null (mapcar (lambda (line)
@@ -77,20 +80,21 @@
   (let* ((local-directory (gerrit-get-local-directory project))
          (default-directory (magit-get-top-dir local-directory))
          changes)
+    (setq gerrit-project-cwd default-directory)
     (if (string= "" local-directory)
         (error "Cannot find %s in magit-repos-dir" project))
     (unless (gerrit-check-if-repo-modified)
         (error "%s has changes, not processing" project))
     (let ((proc (concat "git-review" review-id)))
       (message "Starting git-review...")
-      (start-process proc "*git review*" gerrit-review-program "-d" review-id)
+      (start-process proc "*git review*" gerrit-review-program "-v" "-d" review-id)
       (set-process-sentinel
        (get-process proc)
        #'(lambda (process event)
-           (if (string= event "finished\n")
-               (magit-diff "HEAD^1")
-             (error "Error while downloading review, check *git review* buffer.")
-            ))))))
+           (let ((default-directory gerrit-project-cwd))
+             (if (string= event "finished\n")
+                 (magit-diff "HEAD^1")
+               (error "Error while downloading review, check *git review* buffer."))))))))
 
 (provide 'gerrit-download)
 
