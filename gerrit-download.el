@@ -4,7 +4,7 @@
 
 ;; Author: Chmouel Boudjnah <chmouel@chmouel.com>
 ;; URL: https://github.com/chmouel/gerrit-download.el
-;; Version: 0.1
+;; Version: 0.2
 ;; Keywords: tools
 ;; Package-Requires: ((magit "20130828.1540"))
 
