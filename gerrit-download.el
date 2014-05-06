@@ -123,8 +123,9 @@
                  ; HEAD would not work since when there is already a
                  ; HEAD git-commit it would not refresh just switch to.
                  (magit-show-commit
-                  (car (magit-git-lines
-			"log" "--no-merges" "-n1" "--pretty=format:%h")))
+                  (magit-git-output
+                   '("log" "--no-merges" "-n1" "--pretty=format:%h"))
+                  nil nil t)
                (error "Error while downloading review, check *git review* buffer."))))))))
 
 ;;; End gerrit-download.el ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
