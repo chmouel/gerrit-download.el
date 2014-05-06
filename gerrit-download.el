@@ -5,9 +5,9 @@
 ;; Author: Chmouel Boudjnah <chmouel@chmouel.com>
 ;; URL: https://github.com/chmouel/gerrit-download.el
 ;; Version: 0.2
-;; Keywords: tools
-;; Package-Requires: ((magit "20130828.1540"))
-
+;; Keywords: tools gerrit git
+;; Package-Requires: ((emacs "24.0") (magit "20130828.1540"))
+;;
 ;;; Commentary:
 
 ;;; This is a mode that will download a review from gerrit using the
