@@ -78,6 +78,12 @@
                (concat path "/" (file-name-nondirectory project)))
               )) magit-repo-dirs) ""))
 
+(defun gerrit-download-insinuate-gnus()
+  "Hook Gerrit Download into Gnus."
+  (define-key gnus-summary-mode-map "v" 'gerrit-download-gnus-from-email)
+  (define-key gnus-article-mode-map "v" 'gerrit-download-gnus-from-email))
+
+;;;###autoload
 (defun gerrit-download-gnus-from-email()
   "Parse an email from jenkins in Gnus and get the project and change-id."
   (interactive)
@@ -92,12 +98,6 @@
       (message "%s %s" project change-id)
       (if (and project change-id)
           (gerrit-download project change-id)))))
-
-;;;###autoload
-(defun gerrit-download-insinuate-gnus()
-  "Hook Gerrit Download into Gnus."
-  (define-key gnus-summary-mode-map "v" 'gerrit-download-gnus-from-email)
-  (define-key gnus-article-mode-map "v" 'gerrit-download-gnus-from-email))
 
 ;;;###autoload
 (defun gerrit-download (project review-id)
