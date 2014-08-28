@@ -109,7 +109,7 @@
          changes)
     (setq gerrit-project-cwd default-directory)
     (if (string= "" local-directory)
-        (error "Cannot find %s in magit-repos-dir" project))
+        (error "Cannot find %s in magit-repo-dirs" project))
     (unless (gerrit-check-if-repo-modified)
         (error "%s has changes, not processing" project))
     (let ((proc (concat "git-review" review-id)))
