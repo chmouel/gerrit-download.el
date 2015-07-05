@@ -6,7 +6,7 @@
 ;; URL: https://github.com/chmouel/gerrit-download.el
 ;; Version: 0.2
 ;; Keywords: tools gerrit git
-;; Package-Requires: ((emacs "24.0") (magit "20130828.1540"))
+;; Package-Requires: ((emacs "24.0") (magit "2.1.0"))
 ;;
 ;;; Commentary:
 
@@ -62,21 +62,19 @@
 
 (defun gerrit-check-if-repo-modified ()
   "Check if current repo has been modified."
-  (null (mapcar (lambda (line)
-                       (string-match "^[ \t]+M" line))
-                     (magit-git-lines "status" "--porcelain"))))
+  (null (magit-git-items "status" "-z" "--porcelain")))
 
 (defun gerrit-get-local-directory (project)
   "Get local project on filesystem from magit-repo-dirs."
   (mapconcat 'identity
-   (mapcar (lambda (path)
-             (cond
-              ((file-exists-p (concat path "/" project))
-               (concat path "/" project))
-              ((file-exists-p (concat path "/" (file-name-nondirectory
-                                                project)))
-               (concat path "/" (file-name-nondirectory project)))
-              )) magit-repo-dirs) ""))
+             (mapcar (lambda (path)
+                       (cond
+                        ((file-exists-p (concat path "/" project))
+                         (concat path "/" project))
+                        ((file-exists-p (concat path "/" (file-name-nondirectory
+                                                          project)))
+                         (concat path "/" (file-name-nondirectory project)))
+                        )) magit-repo-dirs) ""))
 
 (defun gerrit-download-insinuate-gnus()
   "Hook Gerrit Download into Gnus."
@@ -105,28 +103,26 @@
    (list (read-string "Project: ")
          (read-string "Review-ID: ")))
   (let* ((local-directory (gerrit-get-local-directory project))
-         (default-directory (magit-get-top-dir local-directory))
+         (default-directory local-directory)
          changes)
-    (setq gerrit-project-cwd default-directory)
-    (if (string= "" local-directory)
-        (error "Cannot find %s in magit-repos-dir" project))
-    (unless (gerrit-check-if-repo-modified)
+    (magit-with-toplevel
+      (setq gerrit-project-cwd default-directory)
+      (if (string= "" local-directory)
+          (error "Cannot find %s in magit-repos-dir" project))
+      (unless (gerrit-check-if-repo-modified)
         (error "%s has changes, not processing" project))
-    (let ((proc (concat "git-review" review-id)))
-      (message "Starting git-review...")
-      (start-process proc "*git review*" gerrit-review-program "-v" "-d" review-id)
-      (set-process-sentinel
-       (get-process proc)
-       #'(lambda (process event)
-           (let ((default-directory gerrit-project-cwd))
-             (if (string= event "finished\n")
-                 ; HEAD would not work since when there is already a
-                 ; HEAD git-commit it would not refresh just switch to.
-                 (magit-show-commit
-                  (magit-git-output
-                   '("log" "--no-merges" "-n1" "--pretty=format:%h"))
-                  nil nil t)
-               (error "Error while downloading review, check *git review* buffer."))))))))
+      (let ((proc (concat "git-review" review-id)))
+        (message "Starting git-review...")
+        (start-process proc "*git review*" gerrit-review-program "-v" "-d" review-id)
+        (set-process-sentinel
+         (get-process proc)
+         #'(lambda (process event)
+             (let ((default-directory gerrit-project-cwd))
+               (message event)
+               (if (string= event "finished\n")
+                   (magit-show-commit "HEAD")
+                 nil nil t)
+               (error "Error while downloading review, check *git review* buffer.")))))))))
 
 ;;; End gerrit-download.el ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
