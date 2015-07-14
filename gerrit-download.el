@@ -4,7 +4,7 @@
 
 ;; Author: Chmouel Boudjnah <chmouel@chmouel.com>
 ;; URL: https://github.com/chmouel/gerrit-download.el
-;; Version: 0.2
+;; Version: 0.2.1
 ;; Keywords: tools gerrit git
 ;; Package-Requires: ((emacs "24.0") (magit "2.1.0"))
 ;;
@@ -122,7 +122,7 @@
                (if (string= event "finished\n")
                    (magit-show-commit "HEAD")
                  nil nil t)
-               (error "Error while downloading review, check *git review* buffer.")))))))))
+               (error "Error while downloading review, check *git review* buffer."))))))))
 
 ;;; End gerrit-download.el ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
